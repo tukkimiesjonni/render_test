@@ -29,17 +29,25 @@ app.get('/api/persons', (request, response) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-  Note.findById(request.params.id).then(note => {
-    response.json(note)
+  Person.findById(request.params.id).then(person => {
+    response.json(person)
   })
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
-  persons = persons.filter(note => note.id !== id)
 
-  response.status(204).end()
+  Person.findByIdAndDelete(id)
+    .then(deletedPerson => {
+      if (deletedPerson) {
+        response.status(204).end()
+      } else {
+        response.status(404).json({ error: 'person not found' })
+      }
+    })
+    .catch(error => next(error))
 })
+
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
@@ -47,13 +55,6 @@ app.post('/api/persons', (request, response) => {
   if (!body.name) {
     return response.status(400).json({ 
       error: 'name missing' 
-    })
-  }
-
-  const nameExists = persons.some(person => person.name === body.name)
-  if (nameExists) {
-    return response.status(400).json({
-      error: 'name already in phonebook'
     })
   }
 
