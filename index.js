@@ -11,7 +11,7 @@ app.use(morgan('tiny'))
 app.use(cors())
 app.use(express.static('dist'))
 
-// API INFO
+// API INFO BEGIN
 
 app.get('/api/info', (request, response, next) => {
   Person.countDocuments({})
