@@ -13,11 +13,16 @@ app.use(express.static('dist'))
 
 // API INFO
 
-app.get('/api/info', (request, response) => {
-  const count = persons.length
-  const time = new Date 
-  response.send(
-    `<p>Phonebook has info for ${count} people</p>\n<p>${time}</p>`)
+app.get('/api/info', (request, response, next) => {
+  Person.countDocuments({})
+    .then(count => {
+      const time = new Date()
+      response.send(
+        `<p>Phonebook has info for ${count} people</p>
+         <p>${time}</p>`
+      )
+    })
+    .catch(error => next(error))
 })
 
 // API PERSONS BEGIN
